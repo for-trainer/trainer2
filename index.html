@@ -1,0 +1,3461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Установи соответствие — Интерактивный учебный тренажёр</title>
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & PASTEL PALETTE
+       ========================================================================== */
+    :root {
+      --bg-main: #f8fafc;
+      --text-main: #2d3748;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      --pastel-mint: #e8f5e9;
+      --pastel-mint-border: #a5d6a7;
+      --pastel-mint-dark: #2e7d32;
+      
+      --pastel-lavender: #f3e8ff;
+      --pastel-lavender-border: #d8b4fe;
+      --pastel-lavender-dark: #7e22ce;
+      
+      --pastel-peach: #fff1e6;
+      --pastel-peach-border: #fed7aa;
+      --pastel-peach-dark: #c2410c;
+      
+      --pastel-sky: #e0f2fe;
+      --pastel-sky-border: #bae6fd;
+      --pastel-sky-dark: #0369a1;
+      
+      --pastel-rose: #fce7f3;
+      --pastel-rose-border: #fbcfe8;
+      --pastel-rose-dark: #be185d;
+      
+      --pastel-lemon: #fef9c3;
+      --pastel-lemon-border: #fef08a;
+      --pastel-lemon-dark: #854d0e;
+      
+      --pastel-teal: #ccfbf1;
+      --pastel-teal-border: #99f6e4;
+      --pastel-teal-dark: #0f766e;
+      
+      --pastel-sand: #faebd7;
+      --pastel-sand-border: #f6d5a8;
+      --pastel-sand-dark: #8c531b;
+
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --card-border: #e2e8f0;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.09);
+      --shadow-hover: 0 8px 18px rgba(0, 0, 0, 0.12);
+      
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #e0e7ff;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 26px;
+      --radius-pill: 9999px;
+      
+      --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      position: relative;
+    }
+
+    /* Custom Background Layers */
+    #app-background-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-size: cover;
+      background-position: center;
+      transition: background 0.5s ease;
+      opacity: 0.95;
+    }
+
+    .pattern-clouds {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #faf5ff 100%);
+    }
+    .pattern-dots {
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+    }
+    .pattern-peach {
+      background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #ffe4e6 100%);
+    }
+    .pattern-mint {
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #e0f2fe 100%);
+    }
+    .pattern-lavender {
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #fae8ff 100%);
+    }
+
+    /* App Header */
+    header.app-header {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-logo-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 3px 8px rgba(129, 140, 248, 0.4);
+    }
+
+    .header-title-wrap h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .assignment-select-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: var(--transition);
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .assignment-select-badge:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Icon Buttons */
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: #f8fafc;
+      color: #1e293b;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .icon-btn:active {
+      transform: translateY(0);
+    }
+
+    .icon-btn.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .gear-btn {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+    .gear-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      transform: rotate(35deg);
+    }
+
+    /* Main Container */
+    main.game-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px 24px;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      gap: 16px;
+    }
+
+    /* Assignment Info Bar */
+    .assignment-info-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(6px);
+      padding: 10px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .instruction-text {
+      font-size: 0.95rem;
+      color: #334155;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-chips {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: #f1f5f9;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    /* Categories Area (Half-screen visual blocks) */
+    .categories-area {
+      flex: 1 0 auto;
+      min-height: 48vh;
+      display: grid;
+      grid-gap: 16px;
+      align-items: stretch;
+      /* Dynamic columns handled by JS based on category count */
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .category-card {
+      border-radius: var(--radius-lg);
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      position: relative;
+      background: white;
+      overflow: hidden;
+    }
+
+    .category-card.drag-over {
+      transform: scale(1.015);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), var(--shadow-lg);
+    }
+
+    .category-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .category-img-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .category-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Fixed Image Sizes for Categories */
+    .category-img-wrap.img-sm { width: 36px; height: 36px; }
+    .category-img-wrap.img-md { width: 54px; height: 54px; }
+    .category-img-wrap.img-lg { width: 72px; height: 72px; }
+
+    .category-title-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .category-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.25;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .category-count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    /* Category Drop Slot */
+    .category-dropzone {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 44vh;
+      min-height: 130px;
+      transition: background-color 0.2s ease;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .category-dropzone.can-drop {
+      background: rgba(99, 102, 241, 0.06);
+    }
+
+    .empty-drop-placeholder {
+      height: 100%;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(148, 163, 184, 0.4);
+      border-radius: var(--radius-md);
+      color: var(--text-light);
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 10px;
+      pointer-events: none;
+      gap: 4px;
+    }
+
+    /* Bottom Items Bank (Банк элементов) */
+    .items-bank-section {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-xl);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bank-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .bank-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bank-tip {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .items-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      min-height: 64px;
+      max-height: 28vh;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .items-pool:empty::before {
+      content: "Все элементы распределены! Нажмите «Проверить» для оценки результата.";
+      color: #10b981;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: auto;
+      padding: 12px;
+      text-align: center;
+      display: block;
+      width: 100%;
+    }
+
+    /* Draggable/Interactive Item Card */
+    .match-item-card {
+      background: white;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: grab;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1e293b;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      touch-action: none;
+      position: relative;
+    }
+
+    .match-item-card:hover {
+      border-color: #94a3b8;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .match-item-card:active {
+      cursor: grabbing;
+      transform: scale(0.98);
+    }
+
+    .match-item-card.dragging {
+      opacity: 0.45;
+      transform: scale(0.95);
+      border-style: dashed;
+    }
+
+    .match-item-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .match-item-card .item-drag-handle {
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      cursor: grab;
+    }
+
+    .match-item-card .item-img-thumb {
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: #f1f5f9;
+      flex-shrink: 0;
+    }
+
+    /* Fixed item image sizes */
+    .match-item-card.img-sm .item-img-thumb { width: 28px; height: 28px; }
+    .match-item-card.img-md .item-img-thumb { width: 44px; height: 44px; }
+    .match-item-card.img-lg .item-img-thumb { width: 64px; height: 64px; }
+
+    .match-item-card .item-text {
+      word-break: break-word;
+      hyphens: auto;
+      max-width: 220px;
+      line-height: 1.25;
+    }
+
+    /* Item in Dropzone */
+    .category-dropzone .match-item-card {
+      width: 100%;
+      justify-content: space-between;
+      cursor: pointer;
+      background: white;
+      padding: 8px 12px;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .category-dropzone .match-item-card .remove-btn {
+      opacity: 0.5;
+      transition: opacity 0.15s ease;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: var(--radius-pill);
+    }
+    .category-dropzone .match-item-card:hover .remove-btn {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    /* Verification Statuses */
+    .match-item-card.is-correct {
+      border-color: var(--success);
+      background: #f0fdf4;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+    .match-item-card.is-correct::after {
+      content: "✓";
+      color: var(--success);
+      font-weight: 800;
+      margin-left: auto;
+      padding-left: 6px;
+    }
+
+    .match-item-card.is-wrong {
+      border-color: var(--danger);
+      background: #fef2f2;
+      animation: shake 0.4s ease-in-out;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+    }
+    .match-item-card.is-wrong::after {
+      content: "✕";
+      color: var(--danger);
+      font-weight: 800;
+      margin-left: auto;
+      padding-left: 6px;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 6px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      outline: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+    .btn-success:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+    .btn-danger:hover {
+      background: #fecaca;
+      border-color: #f87171;
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 0.85rem;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-window {
+      background: white;
+      width: 100%;
+      max-width: 860px;
+      max-height: 90vh;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.96) translateY(10px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.open .modal-window {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-pill);
+      background: transparent;
+      border: none;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .modal-close-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* Modal Tabs */
+    .modal-tabs {
+      display: flex;
+      background: #f1f5f9;
+      padding: 6px 24px 0;
+      border-bottom: 1px solid #e2e8f0;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      border-radius: 10px 10px 0 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: #1e293b;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      background: white;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
+      position: relative;
+    }
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Assignment Manager List */
+    .assignments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .assignment-manage-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .assignment-manage-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .assignment-manage-card.current {
+      border-color: var(--primary);
+      background: #f5f3ff;
+    }
+
+    .assignment-manage-card .active-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+
+    .card-title-text {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0f172a;
+      padding-right: 48px;
+    }
+
+    .card-desc-text {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .card-meta-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: #475569;
+    }
+    .meta-chip {
+      background: white;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* Form Styles in Editor */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .form-help {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      color: #1e293b;
+      background: white;
+      outline: none;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    /* Custom Tables/Rows for Categories and Items Editor */
+    .editor-section-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .editor-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .editor-section-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .editor-table {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .editor-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+    .editor-row:hover {
+      border-color: #cbd5e1;
+    }
+
+    .editor-row input[type="text"] {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .color-swatch-picker {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: none;
+    }
+
+    .img-upload-btn-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .img-thumb-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+
+    .mini-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .mini-icon-btn:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      background: #f8fafc;
+    }
+
+    /* Backup Tab Styling */
+    .backup-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1e293b;
+      color: white;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: auto;
+      max-width: 380px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast-success { background: #065f46; color: #ecfdf5; border-left: 4px solid #10b981; }
+    .toast-error { background: #991b1b; color: #fef2f2; border-left: 4px solid #ef4444; }
+    .toast-info { background: #1e293b; color: #f8fafc; border-left: 4px solid #6366f1; }
+
+    /* Victory Modal / Celebration */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 150;
+    }
+
+    .celebration-content {
+      text-align: center;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .celebration-trophy {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fef08a, #f59e0b);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+      animation: bounce 1s infinite alternate;
+    }
+
+    .celebration-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .celebration-stats {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    .stat-box {
+      background: #f1f5f9;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-lbl {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 768px) {
+      header.app-header {
+        padding: 8px 12px;
+      }
+      .header-title-wrap h1 {
+        font-size: 1rem;
+      }
+      .assignment-select-badge {
+        max-width: 170px;
+      }
+      main.game-container {
+        padding: 10px 12px 18px;
+        gap: 12px;
+      }
+      .categories-area {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .category-dropzone {
+        max-height: 28vh;
+      }
+      .items-bank-section {
+        padding: 12px;
+      }
+      .modal-window {
+        max-height: 95vh;
+        border-radius: var(--radius-lg);
+      }
+      .modal-body {
+        padding: 16px;
+      }
+    }
+
+    /* Print styles for classroom work */
+    @media print {
+      header.app-header, .controls-bar, .items-bank-section {
+        display: none !important;
+      }
+      .categories-area {
+        display: block;
+      }
+      .category-card {
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Wallpaper Layer -->
+  <div id="app-background-layer" class="pattern-clouds"></div>
+
+  <!-- Confetti Canvas for Victory Celebrations -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Application Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-container">
+        <div class="app-logo-badge" title="Установи соответствие">
+          <!-- SVG Logo / Puzzle Match -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19.439 7.85c0-1.57.802-2.95 2.01-3.76a.54.54 0 0 0-.25-.97c-1.348-.19-2.583-.92-3.349-2.02a.54.54 0 0 0-.88 0c-.766 1.1-2 1.83-3.349 2.02a.54.54 0 0 0-.25.97c1.208.81 2.01 2.19 2.01 3.76s-.802 2.95-2.01 3.76a.54.54 0 0 0 .25.97c1.349.19 2.583.92 3.349 2.02a.54.54 0 0 0 .88 0c.766-1.1 2-1.83 3.349-2.02a.54.54 0 0 0 .25-.97c-1.208-.81-2.01-2.19-2.01-3.76z"></path>
+            <path d="M4 14a2 2 0 0 0 2 2h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path>
+          </svg>
+        </div>
+        <div class="header-title-wrap">
+          <h1>Установи соответствие</h1>
+        </div>
+      </div>
+
+      <!-- Quick Assignment Selector Pill -->
+      <button class="assignment-select-badge" id="header-assignment-btn" title="Сменить задание">
+        <!-- SVG Book/Tasks icon -->
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span id="header-assignment-title">Классификация животных</span>
+        <!-- SVG Chevron down -->
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Header Tools & Settings Gear -->
+    <div class="header-actions">
+      <!-- Sound Toggle Button -->
+      <button class="icon-btn" id="btn-sound-toggle" title="Включить/выключить звук" aria-label="Звук">
+        <svg id="icon-sound-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <svg id="icon-sound-off" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+      </button>
+
+      <!-- Fullscreen Toggle Button -->
+      <button class="icon-btn" id="btn-fullscreen" title="Полноэкранный режим (для интерактивной доски)" aria-label="Полный экран">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+      </button>
+
+      <!-- Settings Gear Button (Top Right as requested) -->
+      <button class="icon-btn gear-btn" id="btn-open-settings" title="Настройки и редактирование заданий" aria-label="Настройки">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Game Container -->
+  <main class="game-container">
+    
+    <!-- Top Information Bar -->
+    <div class="assignment-info-bar">
+      <div class="instruction-text" id="assignment-instruction">
+        <!-- SVG Info Icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span id="instruction-content">Перетащите элементы из банка в соответствующие категории или кликните сначала на карточку, а затем на категорию.</span>
+      </div>
+
+      <div class="stats-chips">
+        <div class="stat-chip" title="Тип соответствия">
+          <span id="stat-match-type">Много к одному</span>
+        </div>
+        <div class="stat-chip" title="Прогресс распределения">
+          <span>Размещено:</span>
+          <strong id="stat-placed-count">0 / 0</strong>
+        </div>
+        <div class="stat-chip" title="Осталось в банке">
+          <span>Осталось:</span>
+          <strong id="stat-remaining-count">0</strong>
+        </div>
+        <div class="stat-chip" id="stat-timer-wrap" title="Время выполнения">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="stat-timer">00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Grid (Drop Zones) -->
+    <div class="categories-area" id="categories-container">
+      <!-- Injected dynamically via JS -->
+    </div>
+
+    <!-- Items Bank Section (Банк элементов) -->
+    <section class="items-bank-section">
+      <div class="bank-header">
+        <div class="bank-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Банк элементов для распределения
+        </div>
+        <div class="bank-tip">
+          Совет: можно перетаскивать мышкой или нажимать пальцем/кликом
+        </div>
+      </div>
+
+      <!-- Items Pool Area -->
+      <div class="items-pool" id="items-pool-container">
+        <!-- Items injected dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- Action Controls Bar -->
+    <div class="controls-bar">
+      <button class="btn btn-primary" id="btn-check-answers">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Проверить результат
+      </button>
+
+      <button class="btn btn-secondary" id="btn-reset-game">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v6h6"></path>
+          <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+          <path d="M21 22v-6h-6"></path>
+          <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+        </svg>
+        Сбросить
+      </button>
+
+      <button class="btn btn-secondary" id="btn-hint" title="Показать подсказку">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18h6"></path>
+          <path d="M10 22h4"></path>
+          <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+        </svg>
+        Подсказка
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       SETTINGS MODAL (Управление заданиями, Редактор, Резервное копирование)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-window">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title" id="settings-modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Панель настроек тренажёра
+        </div>
+        <button class="modal-close-btn" id="btn-close-settings" title="Закрыть (Esc)" aria-label="Закрыть">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Tabs Navigation -->
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="tab-list">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Мои задания
+        </button>
+
+        <button class="tab-btn" data-tab="tab-editor" id="tab-nav-editor">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          Редактор задания
+        </button>
+
+        <button class="tab-btn" data-tab="tab-backup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Резервное копирование
+        </button>
+
+        <button class="tab-btn" data-tab="tab-about">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Справка
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        
+        <!-- ================= TAB 1: LIST OF ASSIGNMENTS ================= -->
+        <div class="tab-panel active" id="tab-list">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:700; color:#0f172a;">Список сохранённых заданий</h3>
+              <p style="font-size:0.85rem; color:#64748b;">Выберите задание для запуска, отредактируйте или создайте новое</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btn-create-new-assignment">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Создать новое задание
+            </button>
+          </div>
+
+          <!-- Grid of assignments -->
+          <div class="assignments-grid" id="assignments-list-container">
+            <!-- Cards rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: ASSIGNMENT EDITOR ================= -->
+        <div class="tab-panel" id="tab-editor">
+          <form id="assignment-editor-form" onsubmit="return false;">
+            <input type="hidden" id="edit-assignment-id" value="">
+
+            <!-- Basic Info Row -->
+            <div class="form-row">
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label" for="edit-title">Название задания *</label>
+                <input type="text" id="edit-title" class="form-control" placeholder="Например: Классификация животных" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-instruction">Инструкция для учащихся</label>
+              <input type="text" id="edit-instruction" class="form-control" placeholder="Например: Распределите животных по соответствующим классам">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="edit-match-type">Тип соответствия</label>
+                <select id="edit-match-type" class="form-control">
+                  <option value="many_to_one">Много к одному (Группировка по категориям)</option>
+                  <option value="one_to_one">Один к одному (Строгие пары)</option>
+                </select>
+                <div class="form-help">При 1 к 1 в каждой категории может находиться ровно один верный элемент.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="edit-img-size">Размер картинок</label>
+                <select id="edit-img-size" class="form-control">
+                  <option value="sm">Малый (компактный)</option>
+                  <option value="md" selected>Средний (стандартный)</option>
+                  <option value="lg">Большой (наглядный)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="edit-bg-pattern">Фон задания</label>
+                <select id="edit-bg-pattern" class="form-control">
+                  <option value="pattern-clouds">Нежная пастель (Облачный градиент)</option>
+                  <option value="pattern-dots">Учебный точечный паттерн</option>
+                  <option value="pattern-mint">Свежая мята</option>
+                  <option value="pattern-peach">Тёплый персик</option>
+                  <option value="pattern-lavender">Лавандовая нега</option>
+                  <option value="custom">Пользовательское изображение...</option>
+                </select>
+                <div id="custom-bg-upload-container" style="display:none; margin-top:8px;">
+                  <input type="file" id="edit-custom-bg-input" accept="image/*" class="form-control" style="font-size:0.8rem; padding:6px;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-clear-bg-img" style="margin-top:4px; display:none;">Удалить фон</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categories Editor Section -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div>
+                  <div class="editor-section-title">Категории соответствия</div>
+                  <div class="form-help">Блоки, в которые распределяются карточки (минимум 2)</div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-add-category">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Добавить категорию
+                </button>
+              </div>
+
+              <div class="editor-table" id="editor-categories-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Items Editor Section -->
+            <div class="editor-section-card">
+              <div class="editor-section-header">
+                <div>
+                  <div class="editor-section-title">Элементы для сопоставления</div>
+                  <div class="form-help">Карточки, которые ученик должен распределить (текст и/или картинка)</div>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-bulk-add" title="Вставить несколько элементов списком">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    Ввод списком
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-add-item">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Добавить элемент
+                  </button>
+                </div>
+              </div>
+
+              <!-- Collapsible Bulk Add Panel -->
+              <div id="bulk-add-panel" style="display:none; background:#f1f5f9; padding:12px; border-radius:var(--radius-md); margin-bottom:12px; border:1.5px dashed #cbd5e1;">
+                <div style="font-size:0.85rem; font-weight:700; color:#334155; margin-bottom:4px;">Быстрое добавление карточек из текста:</div>
+                <div style="font-size:0.78rem; color:#64748b; margin-bottom:8px;">
+                  Каждый элемент на новой строке. Формат: <code>Карточка | Название категории</code> (например: <code>Париж | Франция</code>) или просто текст карточки.
+                </div>
+                <textarea id="bulk-add-textarea" class="form-control" rows="4" placeholder="Бурый медведь | Млекопитающие&#10;Синий кит | Млекопитающие&#10;Степной орёл | Птицы"></textarea>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-bulk-cancel">Закрыть</button>
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-bulk-apply">Добавить в список</button>
+                </div>
+              </div>
+
+              <div class="editor-table" id="editor-items-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Editor Action Buttons -->
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+              <button type="button" class="btn btn-secondary" id="btn-cancel-edit">Отмена</button>
+              <button type="button" class="btn btn-primary" id="btn-save-assignment">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Сохранить задание
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ================= TAB 3: BACKUP AND RESTORE ================= -->
+        <div class="tab-panel" id="tab-backup">
+          <h3 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin-bottom:6px;">Резервное копирование и обмен заданиями</h3>
+          <p style="font-size:0.85rem; color:#64748b; margin-bottom:16px;">
+            Вы можете выгрузить все созданные задания в один файл JSON для переноса на другой компьютер, планшет или интерактивную панель, а также восстановить данные из файла.
+          </p>
+
+          <div class="backup-box">
+            <h4 style="font-size:0.95rem; font-weight:700; color:#1e293b; display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Экспорт всех заданий
+            </h4>
+            <p style="font-size:0.85rem; color:#475569;">
+              Сохраняет все задания, настройки фона, картинки и категории в один автономный JSON-файл на ваш компьютер.
+            </p>
+            <div>
+              <button class="btn btn-secondary" id="btn-export-json">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Скачать файл резервной копии (.json)
+              </button>
+            </div>
+          </div>
+
+          <div class="backup-box">
+            <h4 style="font-size:0.95rem; font-weight:700; color:#1e293b; display:flex; align-items:center; gap:8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Импорт из файла JSON
+            </h4>
+            <p style="font-size:0.85rem; color:#475569;">
+              Загрузите ранее сохранённый файл. Файл проверяется перед применением на корректность структуры данных.
+            </p>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <input type="file" id="import-json-file-input" accept=".json" style="display:none;">
+              <button class="btn btn-primary" id="btn-trigger-import">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Выбрать файл для импорта...
+              </button>
+            </div>
+          </div>
+
+          <div class="backup-box" style="border-color:#fecaca; background:#fffaf0;">
+            <h4 style="font-size:0.95rem; font-weight:700; color:#b91c1c;">Сброс к заводским предустановкам</h4>
+            <p style="font-size:0.85rem; color:#78350f;">
+              Восстановить первоначальные демонстрационные задания («Классификация животных»). Все ваши изменения будут перезаписаны.
+            </p>
+            <div>
+              <button class="btn btn-danger btn-sm" id="btn-factory-reset">Восстановить демонстрационные задания</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================= TAB 4: HELP & ABOUT ================= -->
+        <div class="tab-panel" id="tab-about">
+          <h3 style="font-size:1.15rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Руководство для преподавателя</h3>
+          
+          <div style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; color:#334155; line-height:1.5;">
+            <p>
+              <strong>«Установи соответствие»</strong> — это автономный интерактивный веб-тренажёр, созданный специально для образовательного процесса в классах, аудиториях и для дистанционной работы.
+            </p>
+            
+            <div style="background:#f1f5f9; padding:12px; border-radius:var(--radius-md);">
+              <h4 style="font-weight:700; margin-bottom:6px; color:#1e293b;">Способы взаимодействия:</h4>
+              <ul style="padding-left:20px; display:flex; flex-direction:column; gap:6px;">
+                <li><strong>Мышь / Сенсорный экран:</strong> перетаскивайте карточки из нижнего банка прямо в карточку категории (Drag & Drop).</li>
+                <li><strong>Быстрый клик / тап:</strong> нажмите на карточку в банке (она подсветится фиолетовой рамкой), затем нажмите на целевую категорию.</li>
+                <li><strong>Возврат карточки:</strong> нажмите на значок крестика на карточке в категории или кликните по ней, чтобы вернуть её обратно в банк.</li>
+              </ul>
+            </div>
+
+            <div style="background:#f1f5f9; padding:12px; border-radius:var(--radius-md);">
+              <h4 style="font-weight:700; margin-bottom:6px; color:#1e293b;">Возможности конструирования:</h4>
+              <ul style="padding-left:20px; display:flex; flex-direction:column; gap:6px;">
+                <li><strong>Режим 1 к 1:</strong> для сопоставления столиц со странами, формул с названиями, авторов с произведениями.</li>
+                <li><strong>Режим много к 1:</strong> для сортировки и категоризации понятий, эпох, терминов, признаков.</li>
+                <li><strong>Изображения:</strong> можно загружать картинки как в сами категории, так и в карточки ответов. Размер картинок (малый, средний, большой) настраивается в редакторе.</li>
+                <li><strong>Фоны заданий:</strong> выбирайте пастельные паттерны или загружайте собственное фоновое изображение (карту, тематический фон и т.д.).</li>
+                <li><strong>100% автономность:</strong> приложение работает без доступа к интернету, все данные и картинки сохраняются в памяти браузера локально.</li>
+              </ul>
+            </div>
+
+            <div style="background:#f1f5f9; padding:12px; border-radius:var(--radius-md);">
+              <h4 style="font-weight:700; margin-bottom:6px; color:#1e293b;">Горячие клавиши:</h4>
+              <ul style="padding-left:20px; display:flex; flex-direction:column; gap:4px;">
+                <li><kbd style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:700;">Esc</kbd> — быстрое закрытие любого диалогового окна.</li>
+                <li><kbd style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:700;">Enter</kbd> — подтверждение действия.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-modal-close-footer">Закрыть окно</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CONFIRMATION MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="confirm-modal" role="dialog" aria-modal="true">
+    <div class="modal-window" style="max-width:440px;">
+      <div class="modal-header">
+        <div class="modal-title" id="confirm-modal-title">Подтверждение</div>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-modal-message" style="font-size:0.95rem; color:#334155; line-height:1.4;">Вы уверены?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-confirm-cancel">Отмена</button>
+        <button class="btn btn-danger" id="btn-confirm-ok">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       RESULT / VICTORY MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="victory-modal" role="dialog" aria-modal="true">
+    <div class="modal-window" style="max-width:480px;">
+      <div class="modal-body">
+        <div class="celebration-content">
+          <div class="celebration-trophy" id="victory-trophy-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+              <path d="M4 22h16"></path>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+            </svg>
+          </div>
+          
+          <h2 class="celebration-title" id="victory-title">Отличная работа!</h2>
+          <p id="victory-message" style="color:#475569; font-size:0.95rem;">Все элементы распределены абсолютно правильно!</p>
+          
+          <div class="celebration-stats">
+            <div class="stat-box">
+              <div class="stat-val" id="victory-score">0 / 0</div>
+              <div class="stat-lbl">Верных ответов</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="victory-percentage">100%</div>
+              <div class="stat-lbl">Точность</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:8px;">
+            <button class="btn btn-primary" id="btn-victory-replay">Сыграть ещё раз</button>
+            <button class="btn btn-secondary" id="btn-victory-switch">Выбрать другое задание</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Hidden File Input for Image Uploads in Editor -->
+  <input type="file" id="generic-img-upload-input" accept="image/*" style="display:none;">
+
+  <!-- ==========================================================================
+       JAVASCRIPT APPLICATION LOGIC
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. DATA STRUCTURES & DEFAULT PRESETS
+       ========================================================================== */
+    const STORAGE_KEY = 'match_master_edu_assignments_v1';
+    const ACTIVE_ID_KEY = 'match_master_active_id_v1';
+    const SOUND_KEY = 'match_master_sound_v1';
+
+    // Pastel palette styles for category cards
+    const PASTEL_THEMES = [
+      { id: 'mint', name: 'Мятный', bg: '#e8f5e9', border: '#a5d6a7', headerBg: '#c8e6c9', text: '#1b5e20' },
+      { id: 'lavender', name: 'Лавандовый', bg: '#f3e8ff', border: '#d8b4fe', headerBg: '#e9d5ff', text: '#581c87' },
+      { id: 'peach', name: 'Персиковый', bg: '#fff1e6', border: '#fed7aa', headerBg: '#ffedd5', text: '#9a3412' },
+      { id: 'sky', name: 'Небесный', bg: '#e0f2fe', border: '#bae6fd', headerBg: '#bae6fd', text: '#075985' },
+      { id: 'rose', name: 'Розовый', bg: '#fce7f3', border: '#fbcfe8', headerBg: '#fbcfe8', text: '#9d174d' },
+      { id: 'lemon', name: 'Лимонный', bg: '#fef9c3', border: '#fef08a', headerBg: '#fef08a', text: '#713f12' },
+      { id: 'teal', name: 'Бирюзовый', bg: '#ccfbf1', border: '#99f6e4', headerBg: '#99f6e4', text: '#115e59' },
+      { id: 'sand', name: 'Песочный', bg: '#faebd7', border: '#f6d5a8', headerBg: '#fae3c6', text: '#78350f' }
+    ];
+
+    // High quality rich presets for immediate classroom use
+    const DEFAULT_ASSIGNMENTS = [
+      {
+        id: 'preset-animals',
+        title: 'Классификация животных (ОБРАЗЕЦ)',
+        instruction: 'Распределите животных по соответствующим биологическим классам.',
+        matchType: 'many_to_one',
+        imgSize: 'md',
+        bgPattern: 'pattern-mint',
+        customBgImage: '',
+        categories: [
+          { id: 'cat-mammals', title: 'Млекопитающие', themeId: 'mint', image: '' },
+          { id: 'cat-birds', title: 'Птицы', themeId: 'sky', image: '' },
+          { id: 'cat-fish', title: 'Рыбы', themeId: 'teal', image: '' },
+          { id: 'cat-reptiles', title: 'Пресмыкающиеся', themeId: 'peach', image: '' }
+        ],
+        items: [
+          { id: 'item-1', text: 'Бурый медведь', categoryId: 'cat-mammals', image: '' },
+          { id: 'item-2', text: 'Синий кит', categoryId: 'cat-mammals', image: '' },
+          { id: 'item-3', text: 'Императорский пингвин', categoryId: 'cat-birds', image: '' },
+          { id: 'item-4', text: 'Степной орёл', categoryId: 'cat-birds', image: '' },
+          { id: 'item-5', text: 'Речной окунь', categoryId: 'cat-fish', image: '' },
+          { id: 'item-6', text: 'Белая акула', categoryId: 'cat-fish', image: '' },
+          { id: 'item-7', text: 'Хамелеон', categoryId: 'cat-reptiles', image: '' },
+          { id: 'item-8', text: 'Морская черепаха', categoryId: 'cat-reptiles', image: '' }
+        ]
+      },
+      /**
+      {
+        id: 'preset-capitals',
+        title: 'Столицы государств мира',
+        instruction: 'Установите соответствие 1 к 1 между странами и их официальными столицами.',
+        matchType: 'one_to_one',
+        imgSize: 'md',
+        bgPattern: 'pattern-clouds',
+        customBgImage: '',
+        categories: [
+          { id: 'cat-fr', title: 'Франция', themeId: 'lavender', image: '' },
+          { id: 'cat-jp', title: 'Япония', themeId: 'rose', image: '' },
+          { id: 'cat-br', title: 'Бразилия', themeId: 'mint', image: '' },
+          { id: 'cat-eg', title: 'Египет', themeId: 'sand', image: '' },
+          { id: 'cat-it', title: 'Италия', themeId: 'peach', image: '' },
+          { id: 'cat-ca', title: 'Канада', themeId: 'sky', image: '' }
+        ],
+        items: [
+          { id: 'item-p1', text: 'Париж', categoryId: 'cat-fr', image: '' },
+          { id: 'item-p2', text: 'Токио', categoryId: 'cat-jp', image: '' },
+          { id: 'item-p3', text: 'Бразилиа', categoryId: 'cat-br', image: '' },
+          { id: 'item-p4', text: 'Каир', categoryId: 'cat-eg', image: '' },
+          { id: 'item-p5', text: 'Рим', categoryId: 'cat-it', image: '' },
+          { id: 'item-p6', text: 'Оттава', categoryId: 'cat-ca', image: '' }
+        ]
+      },
+      {
+        id: 'preset-grammar',
+        title: 'Части речи русского языка',
+        instruction: 'Определите, к какой части речи относится каждое из предложенных слов.',
+        matchType: 'many_to_one',
+        imgSize: 'sm',
+        bgPattern: 'pattern-lavender',
+        customBgImage: '',
+        categories: [
+          { id: 'cat-noun', title: 'Имя существительное (Кто? Что?)', themeId: 'sky', image: '' },
+          { id: 'cat-adj', title: 'Имя прилагательное (Какой? Чей?)', themeId: 'lemon', image: '' },
+          { id: 'cat-verb', title: 'Глагол (Что делать?)', themeId: 'mint', image: '' }
+        ],
+        items: [
+          { id: 'item-g1', text: 'Вдохновение', categoryId: 'cat-noun', image: '' },
+          { id: 'item-g2', text: 'Солнечный', categoryId: 'cat-adj', image: '' },
+          { id: 'item-g3', text: 'Исследовать', categoryId: 'cat-verb', image: '' },
+          { id: 'item-g4', text: 'Учитель', categoryId: 'cat-noun', image: '' },
+          { id: 'item-g5', text: 'Любознательный', categoryId: 'cat-adj', image: '' },
+          { id: 'item-g6', text: 'Создавать', categoryId: 'cat-verb', image: '' },
+          { id: 'item-g7', text: 'Книга', categoryId: 'cat-noun', image: '' },
+          { id: 'item-g8', text: 'Радостный', categoryId: 'cat-adj', image: '' }
+        ]
+      },
+      {
+        id: 'preset-planets',
+        title: 'Планеты Солнечной системы',
+        instruction: 'Распределите планеты на земную группу и планеты-гиганты.',
+        matchType: 'many_to_one',
+        imgSize: 'md',
+        bgPattern: 'pattern-dots',
+        customBgImage: '',
+        categories: [
+          { id: 'cat-terrestrial', title: 'Планеты земной группы', themeId: 'peach', image: '' },
+          { id: 'cat-gas-giants', title: 'Планеты-гиганты', themeId: 'lavender', image: '' }
+        ],
+        items: [
+          { id: 'item-pl1', text: 'Меркурий', categoryId: 'cat-terrestrial', image: '' },
+          { id: 'item-pl2', text: 'Венера', categoryId: 'cat-terrestrial', image: '' },
+          { id: 'item-pl3', text: 'Земля', categoryId: 'cat-terrestrial', image: '' },
+          { id: 'item-pl4', text: 'Марс', categoryId: 'cat-terrestrial', image: '' },
+          { id: 'item-pl5', text: 'Юпитер', categoryId: 'cat-gas-giants', image: '' },
+          { id: 'item-pl6', text: 'Сатурн', categoryId: 'cat-gas-giants', image: '' },
+          { id: 'item-pl7', text: 'Уран', categoryId: 'cat-gas-giants', image: '' },
+          { id: 'item-pl8', text: 'Нептун', categoryId: 'cat-gas-giants', image: '' }
+        ]
+      }
+    **/];
+
+    /* ==========================================================================
+       2. APPLICATION STATE
+       ========================================================================== */
+    const State = {
+      assignments: [],
+      activeAssignmentId: '',
+      // Map of itemId -> categoryId (or null if still in pool)
+      placements: {},
+      // Selected item for tap-to-match interaction
+      selectedItemId: null,
+      soundEnabled: true,
+      editorCategories: [],
+      editorItems: [],
+      editorCustomBg: '',
+      pendingImageTarget: null, // target callback when generic file picker changes
+      verified: false
+    };
+
+    /* ==========================================================================
+       3. SOUND SYNTHESIZER (Pure Web Audio API - 100% offline)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playClick() {
+        if (!State.soundEnabled) return;
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.06);
+        } catch(e) {}
+      }
+      playDrop() {
+        if (!State.soundEnabled) return;
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(440, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.09);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.09);
+        } catch(e) {}
+      }
+      playCorrect() {
+        if (!State.soundEnabled) return;
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.09); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.18); // G5
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } catch(e) {}
+      }
+      playError() {
+        if (!State.soundEnabled) return;
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(160, now + 0.2);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } catch(e) {}
+      }
+      playVictory() {
+        if (!State.soundEnabled) return;
+        try {
+          this.init();
+          const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+          notes.forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const start = this.ctx.currentTime + (i * 0.1);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.2, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(start);
+            osc.stop(start + 0.35);
+          });
+        } catch(e) {}
+      }
+    }
+    const sounds = new SoundEngine();
+
+    /* ==========================================================================
+       4. CLIENT-SIDE IMAGE COMPRESSION (Prevents localStorage overflow)
+       ========================================================================== */
+    function compressImageFile(file, maxWidth = 380, maxHeight = 380, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith('image/')) {
+          reject(new Error('Выбранный файл не является изображением.'));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              }
+            } else {
+              if (height > maxHeight) {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressedDataUrl);
+          };
+          img.onerror = () => reject(new Error('Ошибка чтения изображения.'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Ошибка загрузки файла.'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    /* ==========================================================================
+       5. PERSISTENCE LAYER (localStorage)
+       ========================================================================== */
+    function loadSavedData() {
+      try {
+        const soundPref = localStorage.getItem(SOUND_KEY);
+        if (soundPref !== null) {
+          State.soundEnabled = soundPref === 'true';
+        }
+        updateSoundUI();
+
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            State.assignments = parsed;
+          } else {
+            State.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+          }
+        } else {
+          State.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+          saveAssignmentsToStorage();
+        }
+
+        const savedActiveId = localStorage.getItem(ACTIVE_ID_KEY);
+        const match = State.assignments.find(a => a.id === savedActiveId);
+        State.activeAssignmentId = match ? match.id : State.assignments[0].id;
+
+      } catch (err) {
+        console.warn('Could not read from localStorage, using presets:', err);
+        State.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+        State.activeAssignmentId = State.assignments[0].id;
+      }
+    }
+
+    function saveAssignmentsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(State.assignments));
+        localStorage.setItem(ACTIVE_ID_KEY, State.activeAssignmentId);
+        return true;
+      } catch (err) {
+        console.error('Storage quota exceeded or error:', err);
+        showToast('Превышен лимит памяти браузера. Попробуйте уменьшить размер загруженных картинок.', 'error');
+        return false;
+      }
+    }
+
+    /* ==========================================================================
+       6. CONFETTI GENERATOR (Pure HTML5 Canvas - 0 dependencies)
+       ========================================================================== */
+    class ConfettiEffect {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.animationFrame = null;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+      start(duration = 2600) {
+        this.resize();
+        this.particles = [];
+        const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6'];
+        for (let i = 0; i < 90; i++) {
+          this.particles.push({
+            x: window.innerWidth / 2 + (Math.random() * 200 - 100),
+            y: window.innerHeight / 2 - 50,
+            vx: (Math.random() - 0.5) * 14,
+            vy: (Math.random() - 0.7) * 16,
+            size: Math.random() * 8 + 6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 10,
+            opacity: 1
+          });
+        }
+        const startTime = Date.now();
+        const render = () => {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          const elapsed = Date.now() - startTime;
+          const fade = elapsed > duration - 600 ? (duration - elapsed) / 600 : 1;
+
+          this.particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.35; // gravity
+            p.rotation += p.rotSpeed;
+
+            this.ctx.save();
+            this.ctx.translate(p.x, p.y);
+            this.ctx.rotate((p.rotation * Math.PI) / 180);
+            this.ctx.fillStyle = p.color;
+            this.ctx.globalAlpha = Math.max(0, p.opacity * fade);
+            this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+            this.ctx.restore();
+          });
+
+          if (elapsed < duration) {
+            this.animationFrame = requestAnimationFrame(render);
+          } else {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          }
+        };
+        if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+        render();
+      }
+    }
+    let confetti = null;
+
+    /* ==========================================================================
+       7. TOAST NOTIFICATIONS & CONFIRMATION DIALOGS
+       ========================================================================== */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') {
+        icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+      } else if (type === 'error') {
+        icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      } else {
+        icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+      }
+
+      toast.innerHTML = `${icon}<span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 260);
+      }, 3400);
+    }
+
+    let confirmModalCallback = null;
+    function openConfirmModal(title, message, okText, onConfirm) {
+      document.getElementById('confirm-modal-title').textContent = title;
+      document.getElementById('confirm-modal-message').textContent = message;
+      const okBtn = document.getElementById('btn-confirm-ok');
+      okBtn.textContent = okText || 'Подтвердить';
+      confirmModalCallback = onConfirm;
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      confirmModalCallback = null;
+    }
+
+    /* Helper: Escape HTML to prevent XSS */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* ==========================================================================
+       8. MAIN GAMEPLAY RENDERING & LOGIC
+       ========================================================================== */
+    function getActiveAssignment() {
+      return State.assignments.find(a => a.id === State.activeAssignmentId) || State.assignments[0];
+    }
+
+    function initGame(resetPlacements = true) {
+      const assignment = getActiveAssignment();
+      if (!assignment) return;
+
+      // Update Header info
+      document.getElementById('header-assignment-title').textContent = assignment.title;
+      document.getElementById('assignment-instruction').querySelector('#instruction-content').textContent = 
+        assignment.instruction || 'Перетащите элементы из банка в соответствующие категории или используйте нажатия.';
+      
+      const matchTypeLabel = assignment.matchType === 'one_to_one' ? 'Один к одному (пары)' : 'Много к одному (категории)';
+      document.getElementById('stat-match-type').textContent = matchTypeLabel;
+
+      // Apply background
+      applyAssignmentBackground(assignment);
+
+      // Reset placements if requested
+      if (resetPlacements) {
+        State.placements = {};
+        assignment.items.forEach(item => {
+          State.placements[item.id] = null;
+        });
+        State.selectedItemId = null;
+        State.verified = false;
+      }
+
+      renderCategories(assignment);
+      renderItemsBank(assignment);
+      updateRemainingCount();
+    }
+
+    function applyAssignmentBackground(assignment) {
+      const bgLayer = document.getElementById('app-background-layer');
+      // Remove pattern classes
+      bgLayer.className = '';
+      if (assignment.customBgImage) {
+        bgLayer.style.backgroundImage = `url("${assignment.customBgImage}")`;
+        bgLayer.style.backgroundColor = 'transparent';
+      } else {
+        bgLayer.style.backgroundImage = '';
+        bgLayer.classList.add(assignment.bgPattern || 'pattern-clouds');
+      }
+    }
+
+    function renderCategories(assignment) {
+      const container = document.getElementById('categories-container');
+      container.innerHTML = '';
+
+      // Compute dynamic responsive grid columns
+      const catCount = assignment.categories.length;
+      if (catCount <= 2) {
+        container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(320px, 1fr))';
+      } else if (catCount === 3) {
+        container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+      } else {
+        container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(240px, 1fr))';
+      }
+
+      assignment.categories.forEach((cat, idx) => {
+        const theme = PASTEL_THEMES.find(t => t.id === cat.themeId) || PASTEL_THEMES[idx % PASTEL_THEMES.length];
+        
+        const card = document.createElement('div');
+        card.className = 'category-card';
+        card.id = `category-card-${cat.id}`;
+        card.dataset.categoryId = cat.id;
+        card.style.borderColor = theme.border;
+        card.style.backgroundColor = theme.bg;
+
+        // Image slot
+        const imgSizeClass = `img-${assignment.imgSize || 'md'}`;
+        const hasImg = cat.image && cat.image.trim() !== '';
+        const imgHtml = hasImg ? `<div class="category-img-wrap ${imgSizeClass}"><img src="${cat.image}" alt=""></div>` : '';
+
+        // Category items placed here
+        const placedItems = assignment.items.filter(item => State.placements[item.id] === cat.id);
+
+        card.innerHTML = `
+          <div class="category-header" style="background:${theme.headerBg}; color:${theme.text};">
+            ${imgHtml}
+            <div class="category-title-wrap">
+              <div class="category-title" style="color:${theme.text};">${escapeHtml(cat.title)}</div>
+              <div class="category-count" id="cat-count-${cat.id}">Элементов: ${placedItems.length}</div>
+            </div>
+          </div>
+          <div class="category-dropzone" id="dropzone-${cat.id}" data-category-id="${cat.id}">
+            ${placedItems.length === 0 ? `
+              <div class="empty-drop-placeholder">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>Переместите карточку сюда</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
+        // Append placed items into dropzone
+        const dropzone = card.querySelector(`#dropzone-${cat.id}`);
+        placedItems.forEach(item => {
+          const itemEl = createItemElement(item, assignment, true);
+          dropzone.appendChild(itemEl);
+        });
+
+        // Setup dropzone events (Drag & Drop + Click-to-place)
+        setupDropzoneEvents(card, dropzone, cat.id);
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderItemsBank(assignment) {
+      const pool = document.getElementById('items-pool-container');
+      pool.innerHTML = '';
+
+      // Unassigned items
+      const unassigned = assignment.items.filter(item => !State.placements[item.id]);
+
+      unassigned.forEach(item => {
+        const itemEl = createItemElement(item, assignment, false);
+        pool.appendChild(itemEl);
+      });
+
+      updateRemainingCount();
+    }
+
+    function createItemElement(item, assignment, isPlaced = false) {
+      const el = document.createElement('div');
+      el.className = `match-item-card img-${assignment.imgSize || 'md'}`;
+      el.id = `item-card-${item.id}`;
+      el.dataset.itemId = item.id;
+      el.setAttribute('draggable', 'true');
+
+      if (State.selectedItemId === item.id) {
+        el.classList.add('selected');
+      }
+
+      // Check verification state
+      if (State.verified && isPlaced) {
+        if (item.categoryId === State.placements[item.id]) {
+          el.classList.add('is-correct');
+        } else {
+          el.classList.add('is-wrong');
+        }
+      }
+
+      const hasImg = item.image && item.image.trim() !== '';
+      const imgHtml = hasImg ? `<img src="${item.image}" class="item-img-thumb" alt="">` : '';
+
+      const dragHandle = !isPlaced ? `
+        <span class="item-drag-handle" title="Перетащить">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+        </span>
+      ` : '';
+
+      const removeBtn = isPlaced ? `
+        <span class="remove-btn" title="Вернуть в банк элементов">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </span>
+      ` : '';
+
+      el.innerHTML = `
+        ${dragHandle}
+        ${imgHtml}
+        <span class="item-text">${escapeHtml(item.text)}</span>
+        ${removeBtn}
+      `;
+
+      // Setup Item Interaction
+      setupItemEvents(el, item, isPlaced);
+
+      return el;
+    }
+
+    /* Setup Item Touch, Drag and Click Handlers */
+    function setupItemEvents(el, item, isPlaced) {
+      // HTML5 Drag
+      el.addEventListener('dragstart', (e) => {
+        sounds.playClick();
+        e.dataTransfer.setData('text/plain', item.id);
+        e.dataTransfer.effectAllowed = 'move';
+        el.classList.add('dragging');
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        document.querySelectorAll('.category-dropzone').forEach(dz => dz.classList.remove('can-drop'));
+        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('drag-over'));
+      });
+
+      // Click to select or move back
+      el.addEventListener('click', (e) => {
+        // If clicking remove button or item is already placed
+        if (isPlaced) {
+          sounds.playDrop();
+          returnItemToPool(item.id);
+          return;
+        }
+
+        // Tap to select item in bank
+        sounds.playClick();
+        if (State.selectedItemId === item.id) {
+          // Deselect
+          State.selectedItemId = null;
+          el.classList.remove('selected');
+        } else {
+          // Select this one
+          document.querySelectorAll('.match-item-card').forEach(c => c.classList.remove('selected'));
+          State.selectedItemId = item.id;
+          el.classList.add('selected');
+        }
+      });
+
+      // Touch events for tablets / iPads / Smartboards
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let ghostEl = null;
+
+      el.addEventListener('touchstart', (e) => {
+        if (isPlaced && e.target.closest('.remove-btn')) {
+          returnItemToPool(item.id);
+          return;
+        }
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+      }, { passive: true });
+
+      el.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        const dist = Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY);
+        if (dist > 12 && !ghostEl) {
+          // Create floating dragging preview
+          ghostEl = el.cloneNode(true);
+          ghostEl.style.position = 'fixed';
+          ghostEl.style.pointerEvents = 'none';
+          ghostEl.style.zIndex = '999';
+          ghostEl.style.opacity = '0.85';
+          ghostEl.style.boxShadow = '0 10px 25px rgba(0,0,0,0.25)';
+          ghostEl.style.transform = 'translate(-50%, -50%)';
+          document.body.appendChild(ghostEl);
+        }
+        if (ghostEl) {
+          ghostEl.style.left = `${touch.clientX}px`;
+          ghostEl.style.top = `${touch.clientY}px`;
+          
+          // Highlight category card underneath
+          const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+          const dropzone = elemBelow ? elemBelow.closest('.category-card') : null;
+          document.querySelectorAll('.category-card').forEach(c => c.classList.remove('drag-over'));
+          if (dropzone) {
+            dropzone.classList.add('drag-over');
+          }
+        }
+      }, { passive: true });
+
+      el.addEventListener('touchend', (e) => {
+        if (ghostEl) {
+          const touch = e.changedTouches[0];
+          ghostEl.remove();
+          ghostEl = null;
+          document.querySelectorAll('.category-card').forEach(c => c.classList.remove('drag-over'));
+
+          const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+          const dropzone = elemBelow ? elemBelow.closest('.category-dropzone') || elemBelow.closest('.category-card') : null;
+          if (dropzone) {
+            const catId = dropzone.dataset.categoryId;
+            if (catId) {
+              placeItemIntoCategory(item.id, catId);
+            }
+          }
+        }
+      });
+    }
+
+    /* Setup Category Dropzone Events */
+    function setupDropzoneEvents(card, dropzone, categoryId) {
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        card.classList.add('drag-over');
+        dropzone.classList.add('can-drop');
+      });
+
+      card.addEventListener('dragleave', (e) => {
+        if (!card.contains(e.relatedTarget)) {
+          card.classList.remove('drag-over');
+          dropzone.classList.remove('can-drop');
+        }
+      });
+
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        dropzone.classList.remove('can-drop');
+
+        const itemId = e.dataTransfer.getData('text/plain');
+        if (itemId) {
+          placeItemIntoCategory(itemId, categoryId);
+        }
+      });
+
+      // Tap-to-match: if user tapped an item card earlier, tapping the category drops it here!
+      card.addEventListener('click', (e) => {
+        if (State.selectedItemId && !e.target.closest('.match-item-card')) {
+          placeItemIntoCategory(State.selectedItemId, categoryId);
+          State.selectedItemId = null;
+        }
+      });
+    }
+
+    function placeItemIntoCategory(itemId, targetCategoryId) {
+      const assignment = getActiveAssignment();
+      const item = assignment.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      // In 1-to-1 mode, only ONE item can occupy each category!
+      if (assignment.matchType === 'one_to_one') {
+        // If another item was in this category, move it back to pool
+        for (const [id, catId] of Object.entries(State.placements)) {
+          if (catId === targetCategoryId && id !== itemId) {
+            State.placements[id] = null;
+          }
+        }
+      }
+
+      State.placements[itemId] = targetCategoryId;
+      sounds.playDrop();
+      State.selectedItemId = null;
+      State.verified = false;
+
+      // Re-render
+      renderCategories(assignment);
+      renderItemsBank(assignment);
+      updateRemainingCount();
+    }
+
+    function returnItemToPool(itemId) {
+      const assignment = getActiveAssignment();
+      State.placements[itemId] = null;
+      State.selectedItemId = null;
+      State.verified = false;
+
+      renderCategories(assignment);
+      renderItemsBank(assignment);
+      updateRemainingCount();
+    }
+
+    function updateRemainingCount() {
+      const assignment = getActiveAssignment();
+      const remaining = assignment.items.filter(i => !State.placements[i.id]).length;
+      document.getElementById('stat-remaining-count').textContent = remaining;
+    }
+
+    /* ==========================================================================
+       9. VERIFICATION & RESULTS MODAL
+       ========================================================================== */
+    function checkAnswers() {
+      const assignment = getActiveAssignment();
+      const totalItems = assignment.items.length;
+      let correctCount = 0;
+      let placedCount = 0;
+
+      assignment.items.forEach(item => {
+        const placedCat = State.placements[item.id];
+        if (placedCat) {
+          placedCount++;
+          if (placedCat === item.categoryId) {
+            correctCount++;
+          }
+        }
+      });
+
+      State.verified = true;
+      renderCategories(assignment);
+      renderItemsBank(assignment);
+
+      // Feedback sounds and alerts
+      if (placedCount === 0) {
+        sounds.playError();
+        showToast('Сначала распределите карточки по категориям!', 'info');
+        return;
+      }
+
+      const percent = Math.round((correctCount / totalItems) * 100);
+
+      if (correctCount === totalItems) {
+        // Perfect Score! Celebration!
+        sounds.playVictory();
+        if (!confetti) confetti = new ConfettiEffect('confetti-canvas');
+        confetti.start();
+
+        document.getElementById('victory-title').textContent = 'Великолепно!';
+        document.getElementById('victory-message').textContent = 'Все соответствия установлены абсолютно верно. Отличная работа!';
+        document.getElementById('victory-score').textContent = `${correctCount} / ${totalItems}`;
+        document.getElementById('victory-percentage').textContent = '100%';
+        document.getElementById('victory-modal').classList.add('open');
+
+      } else {
+        // Some errors or partially done
+        if (correctCount > 0) sounds.playCorrect();
+        else sounds.playError();
+
+        showToast(`Правильно: ${correctCount} из ${totalItems} (${percent}%). Неверные ответы подсвечены красным.`, percent >= 70 ? 'success' : 'error');
+      }
+    }
+
+    function showHint() {
+      const assignment = getActiveAssignment();
+      // Find an item that is either in pool or placed incorrectly
+      const itemToFix = assignment.items.find(i => State.placements[i.id] !== i.categoryId);
+      if (!itemToFix) {
+        showToast('Все карточки уже на своих правильных местах!', 'success');
+        sounds.playCorrect();
+        return;
+      }
+
+      const targetCat = assignment.categories.find(c => c.id === itemToFix.categoryId);
+      sounds.playClick();
+      showToast(`Подсказка: «${itemToFix.text}» относится к категории «${targetCat ? targetCat.title : ''}»`, 'info');
+    }
+
+    function resetCurrentGameWithConfirm() {
+      const assignedCount = Object.values(State.placements).filter(Boolean).length;
+      if (assignedCount === 0) {
+        initGame(true);
+        return;
+      }
+      openConfirmModal(
+        'Сброс прогресса',
+        'Вы уверены, что хотите вернуть все элементы обратно в банк?',
+        'Сбросить',
+        () => {
+          sounds.playDrop();
+          initGame(true);
+          closeConfirmModal();
+          showToast('Задание сброшено в исходное состояние', 'info');
+        }
+      );
+    }
+
+    /* ==========================================================================
+       10. SETTINGS & ASSIGNMENT MANAGEMENT UI
+       ========================================================================== */
+    function openSettingsModal(tab = 'tab-list') {
+      sounds.playClick();
+      switchSettingsTab(tab);
+      renderAssignmentsManageList();
+      document.getElementById('settings-modal').classList.add('open');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.remove('open');
+    }
+
+    function switchSettingsTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === tabId);
+      });
+    }
+
+    function renderAssignmentsManageList() {
+      const container = document.getElementById('assignments-list-container');
+      container.innerHTML = '';
+
+      State.assignments.forEach((assignment) => {
+        const isCurrent = assignment.id === State.activeAssignmentId;
+        const card = document.createElement('div');
+        card.className = `assignment-manage-card ${isCurrent ? 'current' : ''}`;
+
+        const matchLabel = assignment.matchType === 'one_to_one' ? '1 к 1 (пары)' : 'Много к 1';
+        const catCount = assignment.categories.length;
+        const itemCount = assignment.items.length;
+
+        card.innerHTML = `
+          ${isCurrent ? '<span class="active-badge">Активно</span>' : ''}
+          <div class="card-title-text">${escapeHtml(assignment.title)}</div>
+          <div class="card-desc-text">${escapeHtml(assignment.instruction || 'Без инструкции')}</div>
+          <div class="card-meta-chips">
+            <span class="meta-chip">${matchLabel}</span>
+            <span class="meta-chip">Категорий: ${catCount}</span>
+            <span class="meta-chip">Элементов: ${itemCount}</span>
+          </div>
+          <div class="card-actions-row">
+            ${!isCurrent ? `
+              <button class="btn btn-primary btn-sm btn-select-asg" data-id="${assignment.id}">
+                Выбрать
+              </button>
+            ` : '<span style="font-size:0.85rem; font-weight:700; color:var(--primary);">Запущено</span>'}
+            
+            <button class="btn btn-secondary btn-sm btn-edit-asg" data-id="${assignment.id}">
+              Редактировать
+            </button>
+
+            <button class="btn btn-secondary btn-sm btn-duplicate-asg" data-id="${assignment.id}" title="Дублировать задание">
+              Копия
+            </button>
+
+            ${State.assignments.length > 1 ? `
+              <button class="mini-icon-btn btn-delete-asg" data-id="${assignment.id}" title="Удалить задание" style="margin-left:auto;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            ` : ''}
+          </div>
+        `;
+
+        // Card action listeners
+        const selBtn = card.querySelector('.btn-select-asg');
+        if (selBtn) {
+          selBtn.addEventListener('click', () => {
+            selectActiveAssignment(assignment.id);
+            closeSettingsModal();
+          });
+        }
+
+        card.querySelector('.btn-edit-asg').addEventListener('click', () => {
+          openAssignmentEditor(assignment.id);
+        });
+
+        card.querySelector('.btn-duplicate-asg').addEventListener('click', () => {
+          duplicateAssignment(assignment.id);
+        });
+
+        const delBtn = card.querySelector('.btn-delete-asg');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            confirmDeleteAssignment(assignment.id);
+          });
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectActiveAssignment(id) {
+      State.activeAssignmentId = id;
+      saveAssignmentsToStorage();
+      initGame(true);
+      showToast('Задание загружено', 'success');
+      sounds.playClick();
+    }
+
+    function duplicateAssignment(id) {
+      const source = State.assignments.find(a => a.id === id);
+      if (!source) return;
+
+      const copy = JSON.parse(JSON.stringify(source));
+      copy.id = 'asg_' + Date.now();
+      copy.title = `${source.title} (Копия)`;
+      State.assignments.push(copy);
+      saveAssignmentsToStorage();
+      renderAssignmentsManageList();
+      showToast('Копия задания успешно создана', 'success');
+    }
+
+    function confirmDeleteAssignment(id) {
+      const target = State.assignments.find(a => a.id === id);
+      if (!target) return;
+
+      openConfirmModal(
+        'Удаление задания',
+        `Вы точно хотите удалить задание «${target.title}»? Это действие нельзя будет отменить.`,
+        'Удалить',
+        () => {
+          State.assignments = State.assignments.filter(a => a.id !== id);
+          if (State.activeAssignmentId === id) {
+            State.activeAssignmentId = State.assignments[0].id;
+            initGame(true);
+          }
+          saveAssignmentsToStorage();
+          renderAssignmentsManageList();
+          closeConfirmModal();
+          showToast('Задание удалено', 'info');
+        }
+      );
+    }
+
+    /* ==========================================================================
+       11. ASSIGNMENT EDITOR (Categories, Items, Background, Images)
+       ========================================================================== */
+    function createNewAssignmentForm() {
+      const newAsg = {
+        id: 'asg_' + Date.now(),
+        title: 'Новое задание',
+        instruction: 'Распределите элементы по соответствующим категориям.',
+        matchType: 'many_to_one',
+        imgSize: 'md',
+        bgPattern: 'pattern-clouds',
+        customBgImage: '',
+        categories: [
+          { id: 'cat_' + Date.now() + '_1', title: 'Группа 1', themeId: 'mint', image: '' },
+          { id: 'cat_' + Date.now() + '_2', title: 'Группа 2', themeId: 'lavender', image: '' }
+        ],
+        items: [
+          { id: 'item_' + Date.now() + '_1', text: 'Элемент 1', categoryId: 'cat_' + Date.now() + '_1', image: '' },
+          { id: 'item_' + Date.now() + '_2', text: 'Элемент 2', categoryId: 'cat_' + Date.now() + '_2', image: '' }
+        ]
+      };
+      populateEditor(newAsg);
+      switchSettingsTab('tab-editor');
+    }
+
+    function openAssignmentEditor(id) {
+      const asg = State.assignments.find(a => a.id === id);
+      if (!asg) return;
+      populateEditor(asg);
+      switchSettingsTab('tab-editor');
+    }
+
+    function populateEditor(asg) {
+      document.getElementById('edit-assignment-id').value = asg.id;
+      document.getElementById('edit-title').value = asg.title;
+      document.getElementById('edit-instruction').value = asg.instruction || '';
+      document.getElementById('edit-match-type').value = asg.matchType || 'many_to_one';
+      document.getElementById('edit-img-size').value = asg.imgSize || 'md';
+      document.getElementById('edit-bg-pattern').value = asg.customBgImage ? 'custom' : (asg.bgPattern || 'pattern-clouds');
+      
+      State.editorCustomBg = asg.customBgImage || '';
+      updateCustomBgDisplay();
+
+      State.editorCategories = JSON.parse(JSON.stringify(asg.categories));
+      State.editorItems = JSON.parse(JSON.stringify(asg.items));
+
+      renderEditorCategories();
+      renderEditorItems();
+    }
+
+    function updateCustomBgDisplay() {
+      const select = document.getElementById('edit-bg-pattern');
+      const container = document.getElementById('custom-bg-upload-container');
+      const clearBtn = document.getElementById('btn-clear-bg-img');
+
+      if (select.value === 'custom') {
+        container.style.display = 'block';
+        clearBtn.style.display = State.editorCustomBg ? 'inline-block' : 'none';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+
+    function renderEditorCategories() {
+      const container = document.getElementById('editor-categories-list');
+      container.innerHTML = '';
+
+      State.editorCategories.forEach((cat, index) => {
+        const row = document.createElement('div');
+        row.className = 'editor-row';
+
+        const hasImg = cat.image && cat.image.trim() !== '';
+
+        row.innerHTML = `
+          <span style="font-weight:700; color:#64748b; font-size:0.85rem; width:22px;">#${index + 1}</span>
+          
+          <input type="text" class="form-control edit-cat-name" value="${escapeHtml(cat.title)}" placeholder="Название категории" required>
+
+          <select class="form-control edit-cat-theme" style="width:130px;">
+            ${PASTEL_THEMES.map(t => `
+              <option value="${t.id}" ${cat.themeId === t.id ? 'selected' : ''}>${t.name}</option>
+            `).join('')}
+          </select>
+
+          <div class="img-upload-btn-wrap" title="Загрузить изображение">
+            <button type="button" class="mini-icon-btn btn-cat-img-upload">
+              ${hasImg ? `<img src="${cat.image}" class="img-thumb-preview" alt="">` : `
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              `}
+            </button>
+            ${hasImg ? `
+              <button type="button" class="mini-icon-btn btn-cat-img-clear" title="Удалить картинку" style="margin-left:4px;">✕</button>
+            ` : ''}
+          </div>
+
+          ${State.editorCategories.length > 2 ? `
+            <button type="button" class="mini-icon-btn btn-del-cat" title="Удалить категорию">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            </button>
+          ` : '<span style="width:30px;"></span>'}
+        `;
+
+        // Input listeners
+        row.querySelector('.edit-cat-name').addEventListener('input', (e) => {
+          cat.title = e.target.value;
+          updateItemsCategoryDropdowns();
+        });
+
+        row.querySelector('.edit-cat-theme').addEventListener('change', (e) => {
+          cat.themeId = e.target.value;
+        });
+
+        row.querySelector('.btn-cat-img-upload').addEventListener('click', () => {
+          pickImageForTarget((dataUrl) => {
+            cat.image = dataUrl;
+            renderEditorCategories();
+          });
+        });
+
+        const clearImg = row.querySelector('.btn-cat-img-clear');
+        if (clearImg) {
+          clearImg.addEventListener('click', () => {
+            cat.image = '';
+            renderEditorCategories();
+          });
+        }
+
+        const delBtn = row.querySelector('.btn-del-cat');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            State.editorCategories.splice(index, 1);
+            // Re-assign items belonging to deleted cat to first available cat
+            State.editorItems.forEach(item => {
+              if (item.categoryId === cat.id) {
+                item.categoryId = State.editorCategories[0].id;
+              }
+            });
+            renderEditorCategories();
+            renderEditorItems();
+          });
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    function renderEditorItems() {
+      const container = document.getElementById('editor-items-list');
+      container.innerHTML = '';
+
+      State.editorItems.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'editor-row';
+
+        const hasImg = item.image && item.image.trim() !== '';
+
+        row.innerHTML = `
+          <span style="font-weight:700; color:#64748b; font-size:0.85rem; width:22px;">#${index + 1}</span>
+          
+          <input type="text" class="form-control edit-item-name" value="${escapeHtml(item.text)}" placeholder="Текст карточки">
+
+          <select class="form-control edit-item-category" style="width:170px;" title="Верная категория">
+            ${State.editorCategories.map(cat => `
+              <option value="${cat.id}" ${item.categoryId === cat.id ? 'selected' : ''}>${escapeHtml(cat.title || 'Без названия')}</option>
+            `).join('')}
+          </select>
+
+          <div class="img-upload-btn-wrap" title="Загрузить картинку для элемента">
+            <button type="button" class="mini-icon-btn btn-item-img-upload">
+              ${hasImg ? `<img src="${item.image}" class="img-thumb-preview" alt="">` : `
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              `}
+            </button>
+            ${hasImg ? `
+              <button type="button" class="mini-icon-btn btn-item-img-clear" title="Удалить картинку" style="margin-left:4px;">✕</button>
+            ` : ''}
+          </div>
+
+          ${State.editorItems.length > 2 ? `
+            <button type="button" class="mini-icon-btn btn-del-item" title="Удалить карточку">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            </button>
+          ` : '<span style="width:30px;"></span>'}
+        `;
+
+        row.querySelector('.edit-item-name').addEventListener('input', (e) => {
+          item.text = e.target.value;
+        });
+
+        row.querySelector('.edit-item-category').addEventListener('change', (e) => {
+          item.categoryId = e.target.value;
+        });
+
+        row.querySelector('.btn-item-img-upload').addEventListener('click', () => {
+          pickImageForTarget((dataUrl) => {
+            item.image = dataUrl;
+            renderEditorItems();
+          });
+        });
+
+        const clearImg = row.querySelector('.btn-item-img-clear');
+        if (clearImg) {
+          clearImg.addEventListener('click', () => {
+            item.image = '';
+            renderEditorItems();
+          });
+        }
+
+        const delBtn = row.querySelector('.btn-del-item');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            State.editorItems.splice(index, 1);
+            renderEditorItems();
+          });
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    function updateItemsCategoryDropdowns() {
+      document.querySelectorAll('.edit-item-category').forEach((select, idx) => {
+        const item = State.editorItems[idx];
+        if (!item) return;
+        select.innerHTML = State.editorCategories.map(cat => `
+          <option value="${cat.id}" ${item.categoryId === cat.id ? 'selected' : ''}>${escapeHtml(cat.title || 'Без названия')}</option>
+        `).join('');
+      });
+    }
+
+    function pickImageForTarget(callback) {
+      State.pendingImageTarget = callback;
+      const input = document.getElementById('generic-img-upload-input');
+      input.value = '';
+      input.click();
+    }
+
+    function saveAssignmentFromEditor() {
+      const title = document.getElementById('edit-title').value.trim();
+      if (!title) {
+        showToast('Пожалуйста, введите название задания', 'error');
+        document.getElementById('edit-title').focus();
+        return;
+      }
+
+      if (State.editorCategories.length < 2) {
+        showToast('Необходимо добавить как минимум 2 категории', 'error');
+        return;
+      }
+
+      // Check empty category titles
+      const emptyCat = State.editorCategories.some(c => !c.title || !c.title.trim());
+      if (emptyCat) {
+        showToast('Все категории должны иметь название', 'error');
+        return;
+      }
+
+      if (State.editorItems.length < 2) {
+        showToast('Необходимо добавить как минимум 2 элемента для соответствия', 'error');
+        return;
+      }
+
+      // Check that each item has text or an image
+      const emptyItem = State.editorItems.some(i => (!i.text || !i.text.trim()) && (!i.image));
+      if (emptyItem) {
+        showToast('Каждый элемент должен содержать текст или изображение', 'error');
+        return;
+      }
+
+      const matchType = document.getElementById('edit-match-type').value;
+
+      // In 1-to-1 mode, check that each category has strictly 1 item
+      if (matchType === 'one_to_one') {
+        const catDistribution = {};
+        State.editorItems.forEach(i => {
+          catDistribution[i.categoryId] = (catDistribution[i.categoryId] || 0) + 1;
+        });
+        const hasMultiple = Object.values(catDistribution).some(count => count > 1);
+        if (hasMultiple) {
+          showToast('В режиме «1 к 1» к каждой категории должен быть привязан только один элемент!', 'error');
+          return;
+        }
+      }
+
+      const id = document.getElementById('edit-assignment-id').value;
+      const instruction = document.getElementById('edit-instruction').value.trim();
+      const imgSize = document.getElementById('edit-img-size').value;
+      const bgPattern = document.getElementById('edit-bg-pattern').value;
+
+      const assignmentData = {
+        id: id || ('asg_' + Date.now()),
+        title,
+        instruction,
+        matchType,
+        imgSize,
+        bgPattern: bgPattern === 'custom' ? 'pattern-clouds' : bgPattern,
+        customBgImage: bgPattern === 'custom' ? State.editorCustomBg : '',
+        categories: State.editorCategories,
+        items: State.editorItems
+      };
+
+      // Upsert into State.assignments
+      const existingIdx = State.assignments.findIndex(a => a.id === id);
+      if (existingIdx >= 0) {
+        State.assignments[existingIdx] = assignmentData;
+      } else {
+        State.assignments.push(assignmentData);
+      }
+
+      // Make this assignment active
+      State.activeAssignmentId = assignmentData.id;
+
+      if (saveAssignmentsToStorage()) {
+        showToast('Задание успешно сохранено!', 'success');
+        sounds.playCorrect();
+        renderAssignmentsManageList();
+        initGame(true);
+        switchSettingsTab('tab-list');
+      }
+    }
+
+    /* ==========================================================================
+       12. BACKUP: EXPORT & IMPORT (JSON Validation & Safety)
+       ========================================================================== */
+    function exportToJsonFile() {
+      try {
+        const backupData = {
+          app: 'MatchMasterEdu',
+          version: '1.0',
+          exportDate: new Date().toISOString(),
+          activeAssignmentId: State.activeAssignmentId,
+          assignments: State.assignments
+        };
+
+        const jsonStr = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.download = `match_assignments_backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        sounds.playCorrect();
+        showToast('Файл резервной копии успешно выгружен', 'success');
+      } catch (err) {
+        console.error('Export failed:', err);
+        showToast('Не удалось сформировать файл экспорта', 'error');
+      }
+    }
+
+    function handleImportFile(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+
+          // Structural Validation
+          let listToImport = null;
+          if (Array.isArray(parsed)) {
+            listToImport = parsed;
+          } else if (parsed && Array.isArray(parsed.assignments)) {
+            listToImport = parsed.assignments;
+          }
+
+          if (!listToImport || listToImport.length === 0) {
+            throw new Error('Файл не содержит корректных заданий.');
+          }
+
+          // Validate each assignment schema
+          for (const item of listToImport) {
+            if (!item.title || !Array.isArray(item.categories) || !Array.isArray(item.items)) {
+              throw new Error('Некорректная структура заданий в файле JSON.');
+            }
+          }
+
+          openConfirmModal(
+            'Импорт заданий',
+            `Найдено заданий для импорта: ${listToImport.length}. Заменить текущие данные новыми?`,
+            'Импортировать',
+            () => {
+              State.assignments = listToImport;
+              State.activeAssignmentId = listToImport[0].id;
+              saveAssignmentsToStorage();
+              renderAssignmentsManageList();
+              initGame(true);
+              closeConfirmModal();
+              sounds.playVictory();
+              showToast(`Успешно импортировано ${listToImport.length} заданий!`, 'success');
+            }
+          );
+
+        } catch (err) {
+          console.error('Import validation failed:', err);
+          showToast(`Ошибка импорта: ${err.message || 'Неверный формат JSON'}`, 'error');
+          sounds.playError();
+        }
+      };
+      reader.onerror = () => {
+        showToast('Ошибка чтения файла', 'error');
+      };
+      reader.readAsText(file);
+    }
+
+    function factoryResetPresets() {
+      openConfirmModal(
+        'Восстановление демонстрационных данных',
+        'Все ваши текущие задания будут сброшены к исходным демонстрационным. Продолжить?',
+        'Сбросить всё',
+        () => {
+          State.assignments = JSON.parse(JSON.stringify(DEFAULT_ASSIGNMENTS));
+          State.activeAssignmentId = State.assignments[0].id;
+          saveAssignmentsToStorage();
+          renderAssignmentsManageList();
+          initGame(true);
+          closeConfirmModal();
+          showToast('Демонстрационные задания успешно восстановлены', 'success');
+        }
+      );
+    }
+
+    /* ==========================================================================
+       13. FULLSCREEN & SOUND UI HANDLERS
+       ========================================================================== */
+    function toggleFullscreen() {
+      sounds.playClick();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showToast('Полноэкранный режим не поддерживается вашим браузером.', 'info');
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function toggleSound() {
+      State.soundEnabled = !State.soundEnabled;
+      localStorage.setItem(SOUND_KEY, State.soundEnabled ? 'true' : 'false');
+      updateSoundUI();
+      if (State.soundEnabled) sounds.playClick();
+      showToast(State.soundEnabled ? 'Звуковые эффекты включены' : 'Звуковые эффекты выключены', 'info');
+    }
+
+    function updateSoundUI() {
+      const btn = document.getElementById('btn-sound-toggle');
+      const iconOn = document.getElementById('icon-sound-on');
+      const iconOff = document.getElementById('icon-sound-off');
+      if (State.soundEnabled) {
+        iconOn.style.display = 'block';
+        iconOff.style.display = 'none';
+        btn.classList.remove('active');
+      } else {
+        iconOn.style.display = 'none';
+        iconOff.style.display = 'block';
+        btn.classList.add('active');
+      }
+    }
+
+    /* ==========================================================================
+       14. EVENT LISTENERS SETUP
+       ========================================================================== */
+    function attachEventListeners() {
+      // Header buttons
+      document.getElementById('btn-open-settings').addEventListener('click', () => openSettingsModal('tab-list'));
+      document.getElementById('header-assignment-btn').addEventListener('click', () => openSettingsModal('tab-list'));
+      document.getElementById('btn-sound-toggle').addEventListener('click', toggleSound);
+      document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+
+      // Game Action buttons
+      document.getElementById('btn-check-answers').addEventListener('click', checkAnswers);
+      document.getElementById('btn-reset-game').addEventListener('click', resetCurrentGameWithConfirm);
+      document.getElementById('btn-hint').addEventListener('click', showHint);
+
+      // Settings Modal Navigation & Actions
+      document.getElementById('btn-close-settings').addEventListener('click', closeSettingsModal);
+      document.getElementById('btn-modal-close-footer').addEventListener('click', closeSettingsModal);
+      document.querySelectorAll('.modal-tabs .tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchSettingsTab(btn.dataset.tab));
+      });
+      document.getElementById('btn-create-new-assignment').addEventListener('click', createNewAssignmentForm);
+
+      // Editor Buttons
+      document.getElementById('btn-add-category').addEventListener('click', () => {
+        const newCat = {
+          id: 'cat_' + Date.now(),
+          title: `Группа ${State.editorCategories.length + 1}`,
+          themeId: PASTEL_THEMES[State.editorCategories.length % PASTEL_THEMES.length].id,
+          image: ''
+        };
+        State.editorCategories.push(newCat);
+        renderEditorCategories();
+        renderEditorItems();
+      });
+
+      document.getElementById('btn-add-item').addEventListener('click', () => {
+        const newItem = {
+          id: 'item_' + Date.now(),
+          text: `Элемент ${State.editorItems.length + 1}`,
+          categoryId: State.editorCategories[0].id,
+          image: ''
+        };
+        State.editorItems.push(newItem);
+        renderEditorItems();
+      });
+
+      document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+        switchSettingsTab('tab-list');
+      });
+
+      document.getElementById('btn-save-assignment').addEventListener('click', saveAssignmentFromEditor);
+
+      // Background pattern change & custom image input
+      document.getElementById('edit-bg-pattern').addEventListener('change', (e) => {
+        updateCustomBgDisplay();
+      });
+
+      document.getElementById('edit-custom-bg-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const compressed = await compressImageFile(file, 1200, 800, 0.75);
+          State.editorCustomBg = compressed;
+          updateCustomBgDisplay();
+          showToast('Фоновое изображение успешно загружено', 'success');
+        } catch(err) {
+          showToast(err.message || 'Ошибка обработки фона', 'error');
+        }
+      });
+
+      document.getElementById('btn-clear-bg-img').addEventListener('click', () => {
+        State.editorCustomBg = '';
+        document.getElementById('edit-custom-bg-input').value = '';
+        updateCustomBgDisplay();
+      });
+
+      // Generic image input for categories & items
+      document.getElementById('generic-img-upload-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file || !State.pendingImageTarget) return;
+        try {
+          const compressed = await compressImageFile(file, 340, 340, 0.82);
+          State.pendingImageTarget(compressed);
+          State.pendingImageTarget = null;
+        } catch(err) {
+          showToast(err.message || 'Ошибка загрузки изображения', 'error');
+        }
+      });
+
+      // Backup & Restore
+      document.getElementById('btn-export-json').addEventListener('click', exportToJsonFile);
+      
+      document.getElementById('btn-trigger-import').addEventListener('click', () => {
+        document.getElementById('import-json-file-input').value = '';
+        document.getElementById('import-json-file-input').click();
+      });
+
+      document.getElementById('import-json-file-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleImportFile(file);
+      });
+
+      document.getElementById('btn-factory-reset').addEventListener('click', factoryResetPresets);
+
+      // Confirmation Modal buttons
+      document.getElementById('btn-confirm-cancel').addEventListener('click', closeConfirmModal);
+      document.getElementById('btn-confirm-ok').addEventListener('click', () => {
+        if (confirmModalCallback) confirmModalCallback();
+      });
+
+      // Victory Modal buttons
+      document.getElementById('btn-victory-replay').addEventListener('click', () => {
+        document.getElementById('victory-modal').classList.remove('open');
+        initGame(true);
+      });
+      document.getElementById('btn-victory-switch').addEventListener('click', () => {
+        document.getElementById('victory-modal').classList.remove('open');
+        openSettingsModal('tab-list');
+      });
+
+      // Keyboard Accessibility
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (document.getElementById('confirm-modal').classList.contains('open')) {
+            closeConfirmModal();
+          } else if (document.getElementById('victory-modal').classList.contains('open')) {
+            document.getElementById('victory-modal').classList.remove('open');
+          } else if (document.getElementById('settings-modal').classList.contains('open')) {
+            closeSettingsModal();
+          }
+        }
+      });
+
+      // Close modal on click backdrop
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) {
+            backdrop.classList.remove('open');
+          }
+        });
+      });
+    }
+
+    /* ==========================================================================
+       15. APP INITIALIZATION
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedData();
+      attachEventListeners();
+      initGame(true);
+    });
+  </script>
+</body>
+</html>
